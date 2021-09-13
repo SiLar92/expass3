@@ -4,6 +4,7 @@ import com.mongodb.*;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
@@ -17,20 +18,26 @@ public class Insert {
         MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
         MongoDatabase db = mongoClient.getDatabase("expass3-insert");
 
-        MongoCollection<Document> collection = db.getCollection("insert");
+        MongoCollection<Document> collection = db.getCollection("insert2");
 
 
         for (int i = 0; i < 10; i++) {
             insert(collection, i);
         }
 
-        FindIterable<Document> findIterable = collection.find(eq("item", "canvas"));
+        FindIterable<Document> findIterable = collection.find(new Document()); // get all documents from collection
+        MongoCursor<Document> cursor = findIterable.iterator();
 
-
-        for (int i = 0; i < 12; i++) {
-            if(findIterable.iterator().hasNext())
-                System.out.println(findIterable.iterator().next());
+        try {
+            while(cursor.hasNext()) {
+                System.out.println(cursor.next());
+            }
+        } finally {
+            cursor.close();
         }
+
+
+
 
     }
     public static void insert(MongoCollection<Document> collection, int qty) {
