@@ -8,8 +8,10 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import org.bson.Document;
+import org.bson.json.JsonWriterSettings;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.*;
@@ -19,13 +21,13 @@ import static java.util.Collections.singletonList;
 public class CRUD {
     public static void main(String[] args) {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
-        MongoDatabase db = mongoClient.getDatabase("expass3-insert");
+        MongoDatabase db = mongoClient.getDatabase("expass3-CRUD");
 
         MongoCollection<Document> collection = db.getCollection("CRUD");
 
 
         // Insert
-        insert(collection, 0);
+        insertSingle(collection, 0);
 
         System.out.println("\n-------- After Single insert --------");
 
@@ -53,8 +55,8 @@ public class CRUD {
 
     }
 
-    public static void insert(MongoCollection<Document> collection, int qty) {
-        Document canvas = new Document("item", "canvas").append("qty", qty).append("tags", singletonList("cotton"));
+    public static void insertSingle(MongoCollection<Document> collection, int qty) {
+        Document canvas = new Document("item", "A").append("qty", qty).append("tags", singletonList("cotton"));
         Document size = new Document("h", 28.0).append("w", 35.5).append("uom", "cm");
         canvas.put("size", size);
         collection.insertOne(canvas);
@@ -70,6 +72,15 @@ public class CRUD {
                 System.out.println(cursor.next());
             }
         }
+
+//        findIterable.forEach(printDocuments());
+//        Alternate way to print from findIterable
+    }
+
+    private static Consumer<Document> printDocuments() {
+        // Alternate print statement
+        return doc -> System.out.println(doc.toJson(JsonWriterSettings.builder().indent(true).build()));
+
     }
 
     public static void update(MongoCollection<Document> collection, int oldqty, int newqty, double newH, double newW) {
@@ -84,15 +95,15 @@ public class CRUD {
         Document size = new Document("h", 28.0).append("w", 35.5).append("uom", "cm");
 
         collection.bulkWrite(Arrays.asList(
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 1).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 2).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 3).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 4).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 5).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 6).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 7).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 8).append("tags", singletonList("cotton")).append("size", size)),
-                new InsertOneModel<>(new Document("item", "canvas").append("qty", 9).append("tags", singletonList("cotton")).append("size", size))
+                new InsertOneModel<>(new Document("item", "A").append("qty", 1).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "A").append("qty", 2).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "A").append("qty", 3).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "B").append("qty", 4).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "B").append("qty", 5).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "B").append("qty", 6).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "C").append("qty", 7).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "C").append("qty", 8).append("tags", singletonList("cotton")).append("size", size)),
+                new InsertOneModel<>(new Document("item", "C").append("qty", 9).append("tags", singletonList("cotton")).append("size", size))
         ));
     }
 }
